@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
@@ -38,7 +38,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/gradient"
                 android:inputType="number"
+                android:id="@+id/phonenumber"
                 android:maxLength="10"
+                android:text="1234567890"
+                android:fontFamily="@font/comfortaa_bold"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#FFFFFF"
                 android:textSize="18sp" />
@@ -58,6 +61,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="40sp"
         android:textStyle="bold"
+        android:fontFamily="@font/comfortaa_bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,13 +72,14 @@
         android:layout_marginTop="16dp"
         android:text="Sign In To Continue"
         android:textColor="#A6A2A2"
+        android:fontFamily="@font/comfortaa_bold"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
     <TextView
-        android:id="@+id/button"
+        android:id="@+id/gobutton"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginEnd="16dp"
@@ -83,8 +88,24 @@
         android:text="GO"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
+        android:visibility="visible"
+        android:clickable="true"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/invalidphn"
+        android:layout_width="140dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/comfortaa_bold"
+        android:text="Invalid Phone Number"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/card"
+        app:layout_constraintTop_toBottomOf="@+id/card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

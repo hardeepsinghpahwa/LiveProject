@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "991591095864-762a01pva2vuidn37jhi7h72vo0jd1s1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pahwa",
+            "certificate_hash": "9b854fcf8dd553e84cc947896f714cdb43aecf8c"
+          }
+        },
+        {
           "client_id": "991591095864-t0s10vtfqu2pdvkes35pug0ju5qkp7pb.apps.googleusercontent.com",
           "client_type": 3
         }

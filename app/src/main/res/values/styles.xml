@@ -9,12 +9,31 @@
         <item name="fontFamily">@font/comfortaa_bold</item>
     </style>
 
+    <style name="NobarAppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontFamily">@font/comfortaa_bold</item>
+    </style>
+
     <style name="Widget.App.TextInputLayout.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="materialThemeOverlay">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+        <item name="materialThemeOverlay">
+            @style/Widget.MaterialComponents.TextInputLayout.OutlinedBox
+        </item>
         <item name="shapeAppearance">@style/ShapeAppearance.MaterialComponents.SmallComponent</item>
         <item name="hintTextColor">@color/colorPrimary</item>
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="android:textColorHint">@color/colorPrimary</item>
         <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Headline</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
