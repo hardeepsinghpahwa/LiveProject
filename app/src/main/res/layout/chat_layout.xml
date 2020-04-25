@@ -1,55 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    >
+    android:padding="8dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/chatpropiccard"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:cardCornerRadius="25dp"
-        >
+        app:cardCornerRadius="25dp">
 
         <ImageView
             android:id="@+id/chatpropic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/sendtext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/senderchat"
-        android:gravity="center"
-        android:maxWidth="250dp"
-        android:padding="12dp"
-        android:layout_toRightOf="@+id/chatpropiccard"
-        android:text=""
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-         />
 
-    <TextView
-        android:id="@+id/recievetext"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/recieverchat"
-        android:gravity="center"
-        android:maxWidth="250dp"
-        android:padding="12dp"
+        android:layout_toRightOf="@+id/chatpropiccard"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/senderchat"
+        >
+        <TextView
+            android:id="@+id/recieveramounte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/senderchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:id="@+id/receiverproof"
+            android:scaleType="centerCrop"
+            android:layout_gravity="start"
+            />
+
+        <TextView
+            android:id="@+id/recievetext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/senderchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/recievestatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/senderchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:drawablePadding="5dp"
+            android:layout_gravity="start"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentEnd="true"
-        android:text=""
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        />
+        android:background="@drawable/recieverchat"
+        >
+
+        <TextView
+            android:id="@+id/senderamount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/recieverchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:text=""
+            android:layout_gravity="end"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:id="@+id/senderproof"
+            android:scaleType="centerCrop"
+            android:layout_gravity="end"
+            />
+
+        <TextView
+            android:id="@+id/sendtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/recieverchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:text=""
+            android:layout_gravity="end"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/sendstatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/recieverchat"
+            android:gravity="center"
+            android:maxWidth="250dp"
+            android:padding="8dp"
+            android:drawablePadding="5dp"
+            android:layout_gravity="end"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

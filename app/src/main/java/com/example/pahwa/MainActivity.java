@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if(firebaseAuth.getCurrentUser()!=null)
         {
-            startActivity(new Intent(MainActivity.this,SetupProfile.class));
+            startActivity(new Intent(MainActivity.this,Home.class));
         }
     }
 }

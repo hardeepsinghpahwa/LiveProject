@@ -89,7 +89,7 @@ public class SetupProfile extends AppCompatActivity {
                 } else if (alternatephone.getText().toString().length() != 0 && alternatephone.getText().toString().length() != 10) {
                     error.setVisibility(View.VISIBLE);
                     error.setText("Incorrect Alternate Number");
-                } else if (image.toString().length() ==0) {
+                } else if (image==null) {
                     error.setVisibility(View.VISIBLE);
                     error.setText("No Image Selected");}
                 else {
@@ -132,6 +132,7 @@ public class SetupProfile extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             Alerter.create(SetupProfile.this).setTitle("Details Saved").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
+                                            startActivity(new Intent(SetupProfile.this,Home.class));
                                         } else {
                                             Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
                                         }

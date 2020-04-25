@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/constlayout">
+    android:layout_height="wrap_content">
+
 
     <TextView
         android:id="@+id/textView8"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/sendmoneyamount"
+        android:id="@+id/recievemoneyamount"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="80dp"
@@ -28,11 +28,11 @@
         android:drawableLeft="@drawable/ic_rupee_indian"
         android:gravity="center|left"
         android:hint="In Ruppees"
-        android:textCursorDrawable="@null"
         android:inputType="number"
         android:padding="8dp"
         android:textColor="#000000"
         android:textColorHint="#979595"
+        android:textCursorDrawable="@null"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView8"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView8" />
 
     <EditText
-        android:id="@+id/sendmoneymessage"
+        android:id="@+id/receivemoneymessage"
         android:layout_width="0dp"
         android:layout_height="70dp"
         android:layout_marginEnd="32dp"
@@ -52,45 +52,23 @@
         android:textColorHint="#979595"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/sendmoneyamount"
+        app:layout_constraintStart_toStartOf="@+id/recievemoneyamount"
         app:layout_constraintTop_toTopOf="@+id/textView12" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/attachbilltext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Already Paid"
+        android:text="Attach Bill"
         android:textColor="#000000"
         android:textSize="18sp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/sendmoneyamount" />
-
-    <CheckBox
-        android:id="@+id/sendmoneypaidcheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:buttonTint="@color/colorPrimary"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        app:layout_constraintBottom_toBottomOf="@+id/textView9"
-        app:layout_constraintStart_toStartOf="@+id/sendmoneyamount"
-        app:layout_constraintTop_toTopOf="@+id/textView9" />
+        app:layout_constraintTop_toBottomOf="@+id/recievemoneyamount" />
 
     <TextView
-        android:id="@+id/attachprooftext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Attach Proof"
-        android:textColor="#000000"
-        android:visibility="gone"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/textView9"
-        app:layout_constraintTop_toBottomOf="@+id/sendmoneypaidcheckbox" />
-
-    <TextView
-        android:id="@+id/sendmoneyproof"
+        android:id="@+id/recievemoneyproof"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -102,12 +80,11 @@
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/attachprooftext"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/attachbilltext"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/sendmoneypaidcheckbox"
-        app:layout_constraintTop_toTopOf="@+id/attachprooftext" />
+        app:layout_constraintStart_toStartOf="@+id/recievemoneyamount"
+        app:layout_constraintTop_toTopOf="@+id/attachbilltext" />
 
     <TextView
         android:id="@+id/textView12"
@@ -117,44 +94,44 @@
         android:text="Message"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/attachprooftext"
-        app:layout_constraintTop_toBottomOf="@+id/sendmoneyproof" />
+        app:layout_constraintStart_toStartOf="@+id/attachbilltext"
+        app:layout_constraintTop_toBottomOf="@+id/recievemoneyproof" />
 
     <Button
-        android:id="@+id/sendmoneycancel"
+        android:id="@+id/recievemoneycancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/stroke"
         android:text="Cancel"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sendmoneyproceed"
+        app:layout_constraintEnd_toStartOf="@+id/recievemoneyproceed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nofilesend" />
+        app:layout_constraintTop_toBottomOf="@+id/nobill" />
 
     <Button
-        android:id="@+id/sendmoneyproceed"
+        android:id="@+id/recievemoneyproceed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/stroke"
         android:text="Proceed"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sendmoneycancel"
-        app:layout_constraintTop_toTopOf="@+id/sendmoneycancel" />
+        app:layout_constraintStart_toEndOf="@+id/recievemoneycancel"
+        app:layout_constraintTop_toTopOf="@+id/recievemoneycancel" />
 
     <TextView
-        android:id="@+id/nofilesend"
+        android:id="@+id/nobill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="No File Attached.Click Again To Proceed"
-        android:textColor="#BA0C0C"
+        android:layout_marginTop="24dp"
+        android:text="Attach A Bill"
+        android:textColor="#BC0303"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendmoneymessage" />
+        app:layout_constraintTop_toBottomOf="@+id/receivemoneymessage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

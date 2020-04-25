@@ -2,7 +2,26 @@ package com.example.pahwa;
 
 public class chatinfo {
 
-    String message,who,timestamp,alreadypaid,file,amount;
+    String message,who;
+    Long timestamp;
+    String alreadypaid;
+    String file;
+    String amount;
+    String type;
+
+    public chatinfo(String message, String who, Long timestamp, String alreadypaid, String file, String amount, String type, String cleared) {
+        this.message = message;
+        this.who = who;
+        this.timestamp = timestamp;
+        this.alreadypaid = alreadypaid;
+        this.file = file;
+        this.amount = amount;
+        this.type = type;
+        this.cleared = cleared;
+    }
+
+
+    String cleared;
 
     public String getMessage() {
         return message;
@@ -23,20 +42,27 @@ public class chatinfo {
     public chatinfo() {
     }
 
-    public chatinfo(String message, String who, String timestamp, String alreadypaid, String file, String amount) {
-        this.message = message;
-        this.who = who;
-        this.timestamp = timestamp;
-        this.alreadypaid = alreadypaid;
-        this.file = file;
-        this.amount = amount;
+    public String getCleared() {
+        return cleared;
     }
 
-    public String getTimestamp() {
+    public void setCleared(String cleared) {
+        this.cleared = cleared;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
