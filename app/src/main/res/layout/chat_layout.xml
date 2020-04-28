@@ -4,7 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:id="@+id/rl"
+        android:layout_below="@+id/datelayout">
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/chatpropiccard"
@@ -92,6 +100,7 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
+
         </LinearLayout>
 
 
@@ -157,6 +166,68 @@
             android:textSize="14sp" />
 
     </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recievetime"
+        android:layout_below="@+id/rl"
+        android:text="sdad"
+        android:layout_marginLeft="70dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sendertime"
+        android:layout_below="@+id/rl"
+        android:text="sdad"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:id="@+id/datelayout"
+        android:visibility="gone"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="8dp"
+            android:background="#e0e0e0"
+            app:layout_constraintBottom_toBottomOf="@+id/chatdate"
+            app:layout_constraintEnd_toStartOf="@+id/chatdate"
+            app:layout_constraintTop_toTopOf="@+id/chatdate" />
+
+        <TextView
+            android:id="@+id/chatdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="25 April, 2020"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:background="#e0e0e0"
+            app:layout_constraintBottom_toBottomOf="@+id/chatdate"
+            app:layout_constraintStart_toEndOf="@+id/chatdate"
+            app:layout_constraintTop_toTopOf="@+id/chatdate" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 </RelativeLayout>

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.OpenableColumns;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,16 +46,24 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.tapadoo.alerter.Alerter;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,7 +78,8 @@ public class MyAccount extends Fragment {
     EditText amount, message;
     CheckBox alreadypaid;
     Uri file;
-
+    long predate;
+    String dateStr1;
     public MyAccount() {
         // Required empty public constructor
     }
@@ -84,6 +94,13 @@ public class MyAccount extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_my_account, container, false);
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = new Date();
+        String currentdate=(formatter.format(date));
+        Log.i("date1",currentdate);
+
 
         constraintLayout = v.findViewById(R.id.cons);
         sendmoney = v.findViewById(R.id.sendmoney);
@@ -303,7 +320,7 @@ public class MyAccount extends Fragment {
                                             map.put("alreadypaid", paid);
                                             map.put("cleared", "no");
                                             map.put("type", "paid");
-                                            ;
+
                                             FirebaseDatabase.getInstance().getReference().child("Chats").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(random).setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
@@ -356,9 +373,9 @@ public class MyAccount extends Fragment {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<chatinfo, ChatViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final ChatViewHolder holder, final int position, @NonNull chatinfo model) {
+            protected void onBindViewHolder(@NonNull final ChatViewHolder holder, final int position, @NonNull final chatinfo model) {
 
-
+                holder.datel.setVisibility(View.GONE);
                 holder.sendermessage.setVisibility(View.GONE);
                 holder.recievermessage.setVisibility(View.GONE);
                 holder.cardView.setVisibility(View.GONE);
@@ -369,10 +386,53 @@ public class MyAccount extends Fragment {
                 holder.sendstatus.setVisibility(View.GONE);
                 holder.recievestatus.setVisibility(View.GONE);
                 holder.decline.setVisibility(View.GONE);
+                holder.recievetime.setVisibility(View.GONE);
+                holder.sendertime.setVisibility(View.GONE);
+
+                if(position>0)
+                {
+                    firebaseRecyclerAdapter.getRef(position-1).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            predate=dataSnapshot.child("timestamp").getValue(Long.class);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+
+                            dateStr1 = sdf.format(predate);
+
+                           long timestamp = model.getTimestamp();
+                            String dateStr = sdf.format(timestamp);
+
+                            if(!dateStr.equals(dateStr1))
+                            {
+                                holder.datel.setVisibility(View.VISIBLE);
+                                holder.date.setText(dateStr);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }else {
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+                    dateStr1 = sdf.format(model.getTimestamp());
+
+                    holder.datel.setVisibility(View.VISIBLE);
+                    holder.date.setText(dateStr1);
+                }
+
 
                 if (model.getWho().equals("sender")) {
                     holder.sendermessage.setVisibility(View.VISIBLE);
                     holder.senderamount.setVisibility(View.VISIBLE);
+                    holder.sendertime.setVisibility(View.VISIBLE);
+
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH-mm aa", Locale.US);
+                    String dateStr2=sdf2.format(model.getTimestamp());
+                    holder.sendertime.setText(dateStr2);
+
                     holder.sendermessage.setText(model.getMessage());
                     if (model.getType().equals("paid")) {
                         holder.senderamount.setText("PAID ₹ " + model.getAmount());
@@ -437,6 +497,13 @@ public class MyAccount extends Fragment {
                     holder.recievermessage.setVisibility(View.VISIBLE);
                     holder.recievermessage.setText(model.getMessage());
                     holder.recieveramount.setVisibility(View.VISIBLE);
+                    holder.recievetime.setVisibility(View.VISIBLE);
+
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH-mm aa", Locale.US);
+                    String dateStr2=sdf2.format(model.getTimestamp());
+                    holder.recievetime.setText(dateStr2);
+
+
                     if (model.getType().equals("paid")) {
                         holder.recieveramount.setText("PAID ₹ " + model.getAmount());
 
@@ -554,7 +621,8 @@ public class MyAccount extends Fragment {
 
     private class ChatViewHolder extends RecyclerView.ViewHolder {
 
-        TextView sendermessage, recievermessage, senderamount, recieveramount, sendstatus, recievestatus,decline;
+        TextView sendermessage, recievermessage, senderamount, recieveramount, sendstatus, recievestatus,decline,date,recievetime,sendertime;
+        ConstraintLayout datel;
         ImageView senderproof, recieverproof;
         CardView cardView;
         ImageView propic;
@@ -573,6 +641,10 @@ public class MyAccount extends Fragment {
             sendstatus = itemView.findViewById(R.id.sendstatus);
             recievestatus = itemView.findViewById(R.id.recievestatus);
             decline=itemView.findViewById(R.id.decline);
+            date=itemView.findViewById(R.id.chatdate);
+            datel=itemView.findViewById(R.id.datelayout);
+            sendertime=itemView.findViewById(R.id.sendertime);
+            recievetime=itemView.findViewById(R.id.recievetime);
         }
     }
 
@@ -628,6 +700,13 @@ public class MyAccount extends Fragment {
         }
 
 
+    }
+
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(time * 1000);
+        String date = DateFormat.format("dd-MM-yyyy", cal).toString();
+        return date;
     }
 
     public String getFileName(Uri uri) {
