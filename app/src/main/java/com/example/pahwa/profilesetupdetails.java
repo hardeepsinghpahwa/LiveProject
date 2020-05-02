@@ -67,5 +67,15 @@ public class profilesetupdetails {
 
     String phone1;
     String phone2;
-    String profilepic;
+    String profilepic,balance;
+
+    public profilesetupdetails(String name, String shopname, String shoplocation, String phone1, String phone2, String profilepic, String balance) {
+        this.name = name;
+        this.shopname = shopname;
+        this.shoplocation = shoplocation;
+        this.phone1 = phone1;
+        this.phone2 = phone2;
+        this.profilepic = profilepic;
+        this.balance = balance;
+    }
 }

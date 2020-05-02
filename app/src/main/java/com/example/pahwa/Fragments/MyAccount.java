@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -71,7 +72,7 @@ public class MyAccount extends Fragment {
 
     RecyclerView recyclerView;
     FirebaseRecyclerAdapter<chatinfo, ChatViewHolder> firebaseRecyclerAdapter;
-    TextView sendmoney, requestmoney, addproof, attachtext, nofile;
+    TextView sendmoney, requestmoney, addproof, attachtext, nofile, balance;
     ConstraintLayout constraintLayout;
     Button cancel, proceed;
     Dialog myDialog;
@@ -79,7 +80,9 @@ public class MyAccount extends Fragment {
     CheckBox alreadypaid;
     Uri file;
     long predate;
-    String dateStr1;
+    ImageView call;
+    String dateStr1, balanceamount,phn;
+
     public MyAccount() {
         // Required empty public constructor
     }
@@ -96,20 +99,49 @@ public class MyAccount extends Fragment {
         View v = inflater.inflate(R.layout.fragment_my_account, container, false);
 
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        Date date = new Date();
-        String currentdate=(formatter.format(date));
-        Log.i("date1",currentdate);
-
-
         constraintLayout = v.findViewById(R.id.cons);
         sendmoney = v.findViewById(R.id.sendmoney);
         requestmoney = v.findViewById(R.id.requestmoney);
+        balance = v.findViewById(R.id.balance);
 
 
         recyclerView = v.findViewById(R.id.chatrecyclerview);
+        call=v.findViewById(R.id.call);
 
-        Query query = FirebaseDatabase.getInstance().getReference().child("Chats").child("id").orderByChild("timestamp");
+
+
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                balanceamount = dataSnapshot.child("balance").getValue(String.class);
+                phn=dataSnapshot.child("phone1").getValue(String.class);
+
+                if (Integer.valueOf(balanceamount) >= 0) {
+                    balance.setTextColor(Color.parseColor("#45F402"));
+                    balance.setText("₹" + String.valueOf(Integer.valueOf(balanceamount)));
+                } else {
+                    balance.setTextColor(Color.RED);
+                    balance.setText("₹" + String.valueOf(Integer.valueOf(balanceamount)));
+                }
+
+
+                call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:"+phn));
+                        startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Chats").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("timestamp");
         FirebaseRecyclerOptions<chatinfo> options = new FirebaseRecyclerOptions.Builder<chatinfo>()
                 .setQuery(query, new SnapshotParser<chatinfo>() {
                     @NonNull
@@ -144,6 +176,7 @@ public class MyAccount extends Fragment {
                     @Override
                     public void onClick(View v) {
                         myDialog.dismiss();
+                        file=null;
                     }
                 });
 
@@ -157,6 +190,10 @@ public class MyAccount extends Fragment {
                 proceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        proceed.setEnabled(false);
+
+
                         final String random = UUID.randomUUID().toString();
 
                         if (file != null) {
@@ -184,6 +221,9 @@ public class MyAccount extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
                                     if (task.isSuccessful()) {
+                                        file=null;
+                                        proceed.setEnabled(true);
+
                                         Uri downloadUri = task.getResult();
                                         progressDialog.dismiss();
                                         Map map = new HashMap<>();
@@ -206,6 +246,8 @@ public class MyAccount extends Fragment {
                                         });
 
                                     } else {
+                                        file=null;
+                                        proceed.setEnabled(true);
                                         progressDialog.dismiss();
                                         Toast.makeText(getActivity(), "Some error occurred", Toast.LENGTH_SHORT).show();
                                     }
@@ -278,6 +320,8 @@ public class MyAccount extends Fragment {
                     @Override
                     public void onClick(View v) {
 
+                        proceed.setEnabled(false);
+
                         final String random = UUID.randomUUID().toString();
 
                         final String paid;
@@ -308,6 +352,9 @@ public class MyAccount extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
+                                            file=null;
+                                            proceed.setEnabled(true);
+
                                             Uri downloadUri = task.getResult();
                                             progressDialog.dismiss();
                                             Map map = new HashMap<>();
@@ -336,7 +383,9 @@ public class MyAccount extends Fragment {
                                     }
                                 });
                             } else {
+
                                 if (nofile.getVisibility() == View.VISIBLE) {
+                                    file=null;
                                     Map map = new HashMap<>();
 
                                     map.put("message", message.getText().toString());
@@ -353,17 +402,20 @@ public class MyAccount extends Fragment {
                                         public void onSuccess(Void aVoid) {
                                             Toast.makeText(getActivity(), "Sent", Toast.LENGTH_SHORT).show();
                                             myDialog.dismiss();
+                                            proceed.setEnabled(true);
                                         }
                                     });
 
                                 } else {
                                     nofile.setVisibility(View.VISIBLE);
+                                    proceed.setEnabled(true);
                                 }
                             }
 
                         } else {
                             paid = "no";
 
+                            proceed.setEnabled(true);
 
                         }
                     }
@@ -372,6 +424,7 @@ public class MyAccount extends Fragment {
         });
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<chatinfo, ChatViewHolder>(options) {
+
             @Override
             protected void onBindViewHolder(@NonNull final ChatViewHolder holder, final int position, @NonNull final chatinfo model) {
 
@@ -389,21 +442,40 @@ public class MyAccount extends Fragment {
                 holder.recievetime.setVisibility(View.GONE);
                 holder.sendertime.setVisibility(View.GONE);
 
-                if(position>0)
-                {
-                    firebaseRecyclerAdapter.getRef(position-1).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Picasso.get().load(dataSnapshot.child("profilepic").getValue(String.class)).into(holder.propic);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                holder.senderproof.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                if (position > 0) {
+                    firebaseRecyclerAdapter.getRef(position - 1).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            predate=dataSnapshot.child("timestamp").getValue(Long.class);
+                            predate = dataSnapshot.child("timestamp").getValue(Long.class);
                             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 
                             dateStr1 = sdf.format(predate);
 
-                           long timestamp = model.getTimestamp();
+                            long timestamp = model.getTimestamp();
                             String dateStr = sdf.format(timestamp);
 
-                            if(!dateStr.equals(dateStr1))
-                            {
+                            if (!dateStr.equals(dateStr1)) {
                                 holder.datel.setVisibility(View.VISIBLE);
                                 holder.date.setText(dateStr);
                             }
@@ -414,7 +486,7 @@ public class MyAccount extends Fragment {
 
                         }
                     });
-                }else {
+                } else {
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
                     dateStr1 = sdf.format(model.getTimestamp());
@@ -429,8 +501,8 @@ public class MyAccount extends Fragment {
                     holder.senderamount.setVisibility(View.VISIBLE);
                     holder.sendertime.setVisibility(View.VISIBLE);
 
-                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH-mm aa", Locale.US);
-                    String dateStr2=sdf2.format(model.getTimestamp());
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm aa", Locale.US);
+                    String dateStr2 = sdf2.format(model.getTimestamp());
                     holder.sendertime.setText(dateStr2);
 
                     holder.sendermessage.setText(model.getMessage());
@@ -451,7 +523,7 @@ public class MyAccount extends Fragment {
                         } else if (model.getCleared().equals("cancelled")) {
                             holder.sendstatus.setText("Rejected");
                             holder.sendstatus.setCompoundDrawablePadding(5);
-                            holder.sendstatus.setTextColor(Color.parseColor("#E90600"));
+                            holder.sendstatus.setTextColor(Color.parseColor("#DD1A15"));
                             holder.sendstatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.cancelled, 0, 0, 0);
                         }
 
@@ -472,12 +544,16 @@ public class MyAccount extends Fragment {
                             holder.sendstatus.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    holder.sendstatus.setEnabled(false);
+
                                     firebaseRecyclerAdapter.getRef(position).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
+                                                holder.sendstatus.setEnabled(true);
                                                 Toast.makeText(getActivity(), "Request Removed", Toast.LENGTH_SHORT).show();
                                             } else {
+                                                holder.sendstatus.setEnabled(true);
                                                 Toast.makeText(getActivity(), "Some Error Occurred", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -499,15 +575,15 @@ public class MyAccount extends Fragment {
                     holder.recieveramount.setVisibility(View.VISIBLE);
                     holder.recievetime.setVisibility(View.VISIBLE);
 
-                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH-mm aa", Locale.US);
-                    String dateStr2=sdf2.format(model.getTimestamp());
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm aa", Locale.US);
+                    final String dateStr2 = sdf2.format(model.getTimestamp());
                     holder.recievetime.setText(dateStr2);
 
 
                     if (model.getType().equals("paid")) {
                         holder.recieveramount.setText("PAID ₹ " + model.getAmount());
 
-                        if(model.getCleared().equals("no")) {
+                        if (model.getCleared().equals("no")) {
                             holder.recievestatus.setClickable(true);
                             holder.recievestatus.setVisibility(View.VISIBLE);
                             holder.recievestatus.setText("Approve");
@@ -518,7 +594,7 @@ public class MyAccount extends Fragment {
                             holder.decline.setVisibility(View.VISIBLE);
                             holder.decline.setText("Reject");
                             holder.decline.setCompoundDrawablePadding(5);
-                            holder.decline.setTextColor(Color.parseColor("#E90600"));
+                            holder.decline.setTextColor(Color.parseColor("#DD1A15"));
                             holder.decline.setCompoundDrawablesWithIntrinsicBounds(R.drawable.cancelled, 0, 0, 0);
 
 
@@ -528,20 +604,44 @@ public class MyAccount extends Fragment {
                                     Alerter.create(getActivity()).setTitle("Are you sure").addButton("Accept", R.style.AlertButton, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            firebaseRecyclerAdapter.getRef(position).child("cleared").setValue("yes").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            Alerter.hide();
+
+                                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        holder.decline.setVisibility(View.GONE);
-                                                        holder.recievestatus.setClickable(false);
-                                                        holder.recievestatus.setText("Approved");
-                                                        holder.recievestatus.setCompoundDrawablePadding(5);
-                                                        holder.recievestatus.setTextColor(Color.parseColor("#45F402"));
-                                                        holder.recievestatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.approved, 0, 0, 0);
-                                                        Toast.makeText(getActivity(), "Accepted", Toast.LENGTH_SHORT).show();
-                                                    }
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    balanceamount = dataSnapshot.child("balance").getValue(String.class);
+
+                                                    FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance").setValue(String.valueOf((Integer.valueOf(balanceamount)) - (Integer.valueOf(model.getAmount())))).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                firebaseRecyclerAdapter.getRef(position).child("cleared").setValue("yes").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+
+                                                                            holder.decline.setVisibility(View.GONE);
+                                                                            holder.recievestatus.setClickable(false);
+                                                                            holder.recievestatus.setText("Approved");
+                                                                            holder.recievestatus.setCompoundDrawablePadding(5);
+                                                                            holder.recievestatus.setTextColor(Color.parseColor("#45F402"));
+                                                                            holder.recievestatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.approved, 0, 0, 0);
+                                                                            Toast.makeText(getActivity(), "Accepted", Toast.LENGTH_SHORT).show();
+
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
                                                 }
                                             });
+
+
                                         }
                                     }).addButton("Cancel", R.style.AlertButton, new View.OnClickListener() {
                                         @Override
@@ -555,6 +655,7 @@ public class MyAccount extends Fragment {
                             holder.decline.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    Alerter.hide();
                                     firebaseRecyclerAdapter.getRef(position).child("cleared").setValue("cancelled").addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -564,15 +665,14 @@ public class MyAccount extends Fragment {
                                                 holder.recievestatus.setClickable(false);
                                                 holder.recievestatus.setText("Rejected");
                                                 holder.recievestatus.setCompoundDrawablePadding(5);
-                                                holder.recievestatus.setTextColor(Color.parseColor("#E90600"));
+                                                holder.recievestatus.setTextColor(Color.parseColor("#DD1A15"));
                                                 holder.recievestatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.cancelled, 0, 0, 0);
                                             }
                                         }
                                     });
                                 }
                             });
-                        }
-                        else {
+                        } else {
                             holder.recievestatus.setVisibility(View.VISIBLE);
 
                             if (model.getCleared().equals("yes")) {
@@ -583,7 +683,7 @@ public class MyAccount extends Fragment {
                             } else if (model.getCleared().equals("cancelled")) {
                                 holder.recievestatus.setText("Rejected");
                                 holder.recievestatus.setCompoundDrawablePadding(5);
-                                holder.recievestatus.setTextColor(Color.parseColor("#E90600"));
+                                holder.recievestatus.setTextColor(Color.parseColor("#DD1A15"));
                                 holder.recievestatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.cancelled, 0, 0, 0);
                             }
 
@@ -593,7 +693,7 @@ public class MyAccount extends Fragment {
 
                     }
                     if (!model.getFile().equals("")) {
-                        holder.recieverproof.setVisibility(View.VISIBLE);
+                         holder.recieverproof.setVisibility(View.VISIBLE);
                         Picasso.get().load(model.getFile()).into(holder.recieverproof);
                     }
                     holder.cardView.setVisibility(View.VISIBLE);
@@ -612,16 +712,20 @@ public class MyAccount extends Fragment {
 
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setHasFixedSize(true);
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+        recyclerView.getAdapter().notifyDataSetChanged();
 
         return v;
     }
 
     private class ChatViewHolder extends RecyclerView.ViewHolder {
 
-        TextView sendermessage, recievermessage, senderamount, recieveramount, sendstatus, recievestatus,decline,date,recievetime,sendertime;
+        TextView sendermessage, recievermessage, senderamount, recieveramount, sendstatus, recievestatus, decline, date, recievetime, sendertime;
         ConstraintLayout datel;
         ImageView senderproof, recieverproof;
         CardView cardView;
@@ -640,11 +744,11 @@ public class MyAccount extends Fragment {
             recieverproof = itemView.findViewById(R.id.receiverproof);
             sendstatus = itemView.findViewById(R.id.sendstatus);
             recievestatus = itemView.findViewById(R.id.recievestatus);
-            decline=itemView.findViewById(R.id.decline);
-            date=itemView.findViewById(R.id.chatdate);
-            datel=itemView.findViewById(R.id.datelayout);
-            sendertime=itemView.findViewById(R.id.sendertime);
-            recievetime=itemView.findViewById(R.id.recievetime);
+            decline = itemView.findViewById(R.id.decline);
+            date = itemView.findViewById(R.id.chatdate);
+            datel = itemView.findViewById(R.id.datelayout);
+            sendertime = itemView.findViewById(R.id.sendertime);
+            recievetime = itemView.findViewById(R.id.recievetime);
         }
     }
 
@@ -690,6 +794,8 @@ public class MyAccount extends Fragment {
 
         if (requestCode == 5) {
 
+            if(data!=null)
+            {
             file = data.getData();
             if (file != null) {
                 addproof.setText(getFileName(file));
@@ -698,15 +804,9 @@ public class MyAccount extends Fragment {
                 }
             }
         }
+        }
 
 
-    }
-
-    private String getDate(long time) {
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(time * 1000);
-        String date = DateFormat.format("dd-MM-yyyy", cal).toString();
-        return date;
     }
 
     public String getFileName(Uri uri) {

@@ -8,35 +8,48 @@
     android:id="@+id/cons"
     tools:context=".Fragments.MyAccount">
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="#FADC47"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Balance : "
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#0CBA13"
+            android:id="@+id/balance"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:background="@drawable/bottomlayout"
+        android:background="@drawable/gradient"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="24dp"
-            android:src="@drawable/callico"
-            android:padding="3dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="24dp"
-            android:src="@drawable/whatsapp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -52,7 +65,6 @@
                 android:id="@+id/requestmoney"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
                 android:background="@drawable/stroke3"
                 android:drawableTop="@drawable/request"
                 android:gravity="center"
@@ -61,6 +73,18 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/callico"
+                android:padding="3dp"
+                android:id="@+id/call"
+                android:layout_marginLeft="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center"
+                />
 
             <TextView
                 android:id="@+id/sendmoney"
@@ -80,16 +104,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatrecyclerview"
-        android:layout_width="409dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatrecyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+             android:orientation="vertical" />
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,6 +24,7 @@
             android:id="@+id/chatpropic"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.cardview.widget.CardView>
@@ -42,7 +43,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/senderchat"
             android:gravity="center"
             android:maxWidth="250dp"
             android:padding="8dp"
@@ -64,7 +64,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/senderchat"
             android:gravity="center"
             android:maxWidth="250dp"
             android:padding="8dp"
@@ -82,7 +81,6 @@
                 android:id="@+id/recievestatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/senderchat"
                 android:gravity="center"
                 android:padding="8dp"
                 android:drawablePadding="5dp"
@@ -93,7 +91,6 @@
                 android:id="@+id/decline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/senderchat"
                 android:gravity="center"
                 android:padding="8dp"
                 android:drawablePadding="5dp"
@@ -127,7 +124,7 @@
             android:padding="8dp"
             android:text=""
             android:layout_gravity="end"
-            android:textColor="#FFFFFF"
+            android:textColor="#000"
             android:textSize="20sp" />
 
 
@@ -149,7 +146,7 @@
             android:padding="8dp"
             android:text=""
             android:layout_gravity="end"
-            android:textColor="#FFFFFF"
+            android:textColor="#000"
             android:textSize="16sp" />
 
         <TextView
