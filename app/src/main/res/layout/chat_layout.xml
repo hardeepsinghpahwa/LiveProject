@@ -47,7 +47,7 @@
             android:maxWidth="250dp"
             android:padding="8dp"
             android:text=""
-            android:textColor="#FFFFFF"
+            android:textColor="#000"
             android:textSize="20sp" />
 
 
@@ -57,6 +57,7 @@
             android:id="@+id/receiverproof"
             android:scaleType="centerCrop"
             android:layout_gravity="start"
+            android:padding="5dp"
             />
 
         <TextView
@@ -68,7 +69,7 @@
             android:maxWidth="250dp"
             android:padding="8dp"
             android:text=""
-            android:textColor="#FFFFFF"
+            android:textColor="#000"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -118,7 +119,6 @@
             android:id="@+id/senderamount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/recieverchat"
             android:gravity="center"
             android:maxWidth="250dp"
             android:padding="8dp"
@@ -134,13 +134,13 @@
             android:id="@+id/senderproof"
             android:scaleType="centerCrop"
             android:layout_gravity="end"
+            android:padding="5dp"
             />
 
         <TextView
             android:id="@+id/sendtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/recieverchat"
             android:gravity="center"
             android:maxWidth="250dp"
             android:padding="8dp"
@@ -153,7 +153,6 @@
             android:id="@+id/sendstatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/recieverchat"
             android:gravity="center"
             android:maxWidth="250dp"
             android:padding="8dp"
@@ -171,7 +170,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/recievetime"
         android:layout_below="@+id/rl"
-        android:text="sdad"
         android:layout_marginLeft="70dp"
         />
 
@@ -180,7 +178,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/sendertime"
         android:layout_below="@+id/rl"
-        android:text="sdad"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
         />
@@ -207,7 +204,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="25 April, 2020"
+            android:background="@drawable/dateback"
+            android:textColor="#FFFFFF"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

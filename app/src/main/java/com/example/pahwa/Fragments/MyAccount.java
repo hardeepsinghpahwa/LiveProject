@@ -611,7 +611,7 @@ public class MyAccount extends Fragment {
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                     balanceamount = dataSnapshot.child("balance").getValue(String.class);
 
-                                                    FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance").setValue(String.valueOf((Integer.valueOf(balanceamount)) - (Integer.valueOf(model.getAmount())))).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance").setValue(String.valueOf((Integer.valueOf(balanceamount)) + (Integer.valueOf(model.getAmount())))).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {

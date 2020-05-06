@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -37,43 +38,56 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private NavController navController;
     private DrawerLayout drawer;
     ImageView profilepic;
-    TextView name,phone;
+    TextView name, phone, amount;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.itemsfragment,
                 R.id.myaccountfragment, R.id.mychatsfragment)
                 .setDrawerLayout(drawer)
                 .build();
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        View v=navigationView.getHeaderView(0);
+        View v = navigationView.getHeaderView(0);
 
-        profilepic=v.findViewById(R.id.profilepic);
-        name=v.findViewById(R.id.nametext);
-        phone=v.findViewById(R.id.phonetext);
+        profilepic = v.findViewById(R.id.profilepic);
+        name = v.findViewById(R.id.nametext);
+        phone = v.findViewById(R.id.phonetext);
+        amount = v.findViewById(R.id.amount);
+
 
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 name.setText(dataSnapshot.child("name").getValue(String.class));
                 phone.setText(dataSnapshot.child("phone1").getValue(String.class));
-                Picasso.get().load(dataSnapshot.child("profilepic").getValue(String.class));
+                Picasso.get().load(dataSnapshot.child("profilepic").getValue(String.class)).into(profilepic);
+
+                if (Integer.valueOf(dataSnapshot.child("balance").getValue(String.class)) > 0) {
+                    amount.setText("₹ " + dataSnapshot.child("balance").getValue(String.class) + " advance");
+                } else if (Integer.valueOf(dataSnapshot.child("balance").getValue(String.class)) == 0) {
+                    amount.setText("₹ " + dataSnapshot.child("balance").getValue(String.class));
+                } else if (Integer.valueOf(dataSnapshot.child("balance").getValue(String.class)) < 0) {
+                    amount.setText("₹ " + dataSnapshot.child("balance").getValue(String.class) + " due");
+                }
             }
 
             @Override
@@ -96,19 +110,24 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
 
             case R.id.myaccount:
-                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.myaccountfragment);
+
+                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.myaccountfragment);
                 break;
 
             case R.id.mychat:
-                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.mychatsfragment);
+                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.mychatsfragment);
                 break;
 
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(Home.this,MainActivity.class));
+                startActivity(new Intent(Home.this, MainActivity.class));
+
+            case R.id.explore:
+                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.itemsfragment);
+                break;
         }
 
 

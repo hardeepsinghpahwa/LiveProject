@@ -28,12 +28,30 @@
         <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Headline</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="NoBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">#FFFFFF</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:buttonStyleToggle">@style/DrawerIcon</item>
+        <item name="drawerArrowStyle">@style/DrawerIcon</item>
+        <item name="android:windowLightStatusBar">true</item>
+
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="NavigationTheme" parent="AppTheme">
+        <item name="listPreferredItemHeightSmall">60dp</item>
+
+    </style>
+
+    <style name="DrawerIcon" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/colorPrimary</item>
+    </style>
+
 </resources>

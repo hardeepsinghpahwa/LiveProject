@@ -3,7 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/myaccountfragment">
+    app:startDestination="@+id/itemsfragment">
+
+
+    <fragment
+        android:id="@+id/itemsfragment"
+        android:name="com.example.pahwa.Fragments.Items"
+        android:label="Explore"
+        tools:layout="@layout/fragment_items" >
+
+    </fragment>
 
     <fragment
         android:id="@+id/myaccountfragment"
