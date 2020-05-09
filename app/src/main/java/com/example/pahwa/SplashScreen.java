@@ -1,7 +1,7 @@
 package com.example.pahwa;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import static maes.tech.intentanim.CustomIntent.customType;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +31,8 @@ public class SplashScreen extends AppCompatActivity {
                     Intent i = new Intent(SplashScreen.this,
                             MainActivity.class);
                     startActivity(i);
+
+                    customType(SplashScreen.this,"fadein-to-fadeout");
 
                     finish();
                 }

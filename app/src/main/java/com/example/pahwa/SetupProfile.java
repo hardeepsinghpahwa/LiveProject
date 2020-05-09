@@ -3,6 +3,7 @@ package com.example.pahwa;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -57,7 +58,7 @@ public class SetupProfile extends AppCompatActivity {
         profilepicture = findViewById(R.id.profilepicture);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        storageReference= FirebaseStorage.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         profilepicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +69,6 @@ public class SetupProfile extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
             }
         });
-
 
 
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -89,60 +89,76 @@ public class SetupProfile extends AppCompatActivity {
                 } else if (alternatephone.getText().toString().length() != 0 && alternatephone.getText().toString().length() != 10) {
                     error.setVisibility(View.VISIBLE);
                     error.setText("Incorrect Alternate Number");
-                } else if (image==null) {
+                } else if (image == null) {
                     error.setVisibility(View.VISIBLE);
-                    error.setText("No Image Selected");}
-                else {
+                    error.setText("No Image Selected");
+                } else {
 
+                    if (image != null) {
 
-                    UploadTask uploadTask = storageReference.child("ProfilePictures").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).putFile(image);
+                        final ProgressDialog progressDialog=new ProgressDialog(SetupProfile.this);
+                        progressDialog.setTitle("Please Wait");
+                        progressDialog.setMessage("Uploading Details");
+                        progressDialog.show();
 
-                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
+                        UploadTask uploadTask = storageReference.child("ProfilePictures").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).putFile(image);
+
+                        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+
+                                // Continue with the task to get the download URL
+                                return storageReference.child("ProfilePictures").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getDownloadUrl();
                             }
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    Uri downloadUri = task.getResult();
+                                    profilesetupdetails details = new profilesetupdetails(name.getText().toString(), shopname.getText().toString(), shoplocation.getText().toString(), phone.getText().toString(), alternatephone.getText().toString(), downloadUri.toString(),"0");
 
-                            // Continue with the task to get the download URL
-                            return storageReference.child("ProfilePictures").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getDownloadUrl();
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
-                                profilesetupdetails details = new profilesetupdetails(name.getText().toString(), shopname.getText().toString(), shoplocation.getText().toString(), phone.getText().toString(), alternatephone.getText().toString(), downloadUri.toString());
-
-                                databaseReference.child("Profiles").child(firebaseUser.getUid()).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Alerter.create(SetupProfile.this).setTitle("Details Saved").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
-                                        } else {
-                                            Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
+                                    databaseReference.child("Profiles").child(firebaseUser.getUid()).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            progressDialog.dismiss();
+                                            if (task.isSuccessful()) {
+                                                Alerter.create(SetupProfile.this).setTitle("Details Saved").setBackgroundColorInt(getResources().getColor(R.color.colorPrimary)).show();
+                                                startActivity(new Intent(SetupProfile.this,Home.class));
+                                            } else {
+                                                Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundColorInt(getResources().getColor(R.color.colorPrimary)).show();
+                                            }
                                         }
-                                    }
-                                });
-                            } else {
-                                profilesetupdetails details = new profilesetupdetails(name.getText().toString(), shopname.getText().toString(), shoplocation.getText().toString(), phone.getText().toString(), alternatephone.getText().toString(), "https://firebasestorage.googleapis.com/v0/b/pahwa-5e4f7.appspot.com/o/pp.png?alt=media&token=39c9e2c9-6cea-4b96-a4c0-31c5ca7908ae");
-
-                                databaseReference.child("Profiles").child(firebaseUser.getUid()).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Alerter.create(SetupProfile.this).setTitle("Details Saved").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
-                                            startActivity(new Intent(SetupProfile.this,Home.class));
-                                        } else {
-                                            Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundDrawable(getResources().getDrawable(R.drawable.gradient2)).show();
-                                        }
-                                    }
-                                });
+                                    });
+                                } else {
+                                    progressDialog.dismiss();
+                                    Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundColorInt(getResources().getColor(R.color.colorPrimary)).show();
+                                }
                             }
-                        }
-                    });
+                        });
 
+                    } else {
+                        final ProgressDialog progressDialog=new ProgressDialog(SetupProfile.this);
+                        progressDialog.setTitle("Please Wait");
+                        progressDialog.setMessage("Uploading Details");
+                        progressDialog.show();
+                        profilesetupdetails details = new profilesetupdetails(name.getText().toString(), shopname.getText().toString(), shoplocation.getText().toString(), phone.getText().toString(), alternatephone.getText().toString(), "https://firebasestorage.googleapis.com/v0/b/pahwa-5e4f7.appspot.com/o/pp.png?alt=media&token=39c9e2c9-6cea-4b96-a4c0-31c5ca7908ae","0");
 
+                        databaseReference.child("Profiles").child(firebaseUser.getUid()).setValue(details).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                progressDialog.dismiss();
+                                if (task.isSuccessful()) {
+                                    Alerter.create(SetupProfile.this).setTitle("Details Saved").setBackgroundColorInt(getColor(R.color.colorPrimary)).show();
+                                    startActivity(new Intent(SetupProfile.this, Home.class));
+                                } else {
+                                    Alerter.create(SetupProfile.this).setTitle("Some Problem Occured").setBackgroundColorInt(getColor(R.color.colorPrimary)).show();
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -154,7 +170,7 @@ public class SetupProfile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE) {
 
-            if(data!=null) {
+            if (data != null) {
 
                 profilepicture.setImageURI(data.getData());
                 image = data.getData();

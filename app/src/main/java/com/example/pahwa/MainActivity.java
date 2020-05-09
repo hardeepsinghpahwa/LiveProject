@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthProvider;
 
@@ -23,7 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     TextInputEditText phone;
-    TextView go,invalid;
+    TextInputLayout layout;
+    TextView go,invalid,hey,signin;
     FirebaseAuth firebaseAuth;
 
     @Override
@@ -35,6 +38,42 @@ public class MainActivity extends AppCompatActivity {
         go=findViewById(R.id.gobutton);
         invalid=findViewById(R.id.invalidphn);
         firebaseAuth=FirebaseAuth.getInstance();
+        hey=findViewById(R.id.heytext);
+        signin=findViewById(R.id.signintext);
+        layout=findViewById(R.id.textinput);
+
+
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hey.setVisibility(View.VISIBLE);
+                YoYo.with(Techniques.FadeInDown)
+                        .duration(700)
+                        .playOn(hey);
+            }
+        },1000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                signin.setVisibility(View.VISIBLE);
+                YoYo.with(Techniques.FadeInDown)
+                        .duration(700)
+                        .playOn(signin);
+            }
+        },2000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layout.setVisibility(View.VISIBLE);
+                YoYo.with(Techniques.FadeInDown)
+                        .duration(1000)
+                        .playOn(layout);
+            }
+        },2500);
 
         phone.addTextChangedListener(new TextWatcher() {
             @Override

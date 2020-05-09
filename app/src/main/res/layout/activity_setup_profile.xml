@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bck2"
+    android:background="#FFFFFF"
     tools:context=".SetupProfile">
 
     <TextView
@@ -67,7 +67,7 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/stroke_white"
         android:ems="10"
-        android:hint="Shop Location"
+        android:hint="Location"
         android:inputType="textPersonName"
         android:padding="10dp"
         android:textColor="#000"

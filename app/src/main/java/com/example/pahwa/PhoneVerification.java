@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -29,8 +31,15 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_NULL;
 
 public class PhoneVerification extends AppCompatActivity {
 
@@ -47,6 +56,8 @@ public class PhoneVerification extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_verification);
+
+
         phone=getIntent().getStringExtra("phn");
         sendingcode=findViewById(R.id.sendingcode);
         verifycode=findViewById(R.id.verificationcode);
@@ -54,6 +65,18 @@ public class PhoneVerification extends AppCompatActivity {
         progressBar=findViewById(R.id.progress);
         proceed=findViewById(R.id.proceed);
         autodetecting=findViewById(R.id.autodetecting);
+
+        verifycode.setInputType(InputType.TYPE_NULL);
+
+        countdown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(countdown.getText().toString().equals("Send Code Again"))
+                {
+                    sendVerificationCode(phone);
+                }
+            }
+        });
 
         sendingcode.setText("Sending Code To "+phone);
         sendVerificationCode(phone);
@@ -83,9 +106,29 @@ public class PhoneVerification extends AppCompatActivity {
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(PhoneVerification.this,SetupProfile.class);
-                intent.putExtra("phone",phone);
-                startActivity(intent);
+
+                FirebaseDatabase.getInstance().getReference().child("Profiles").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).exists())
+                        {
+                            startActivity(new Intent(PhoneVerification.this,Home.class));
+                        }
+                        else {
+                            Intent intent=new Intent(PhoneVerification.this,SetupProfile.class);
+                            intent.putExtra("phone",phone);
+                            startActivity(intent);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
             }
         });
     }
@@ -95,6 +138,8 @@ public class PhoneVerification extends AppCompatActivity {
         mCallBacks=new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+
                 final String code = phoneAuthCredential.getSmsCode();
 
                 if (code != null) {
@@ -107,12 +152,15 @@ public class PhoneVerification extends AppCompatActivity {
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 Toast.makeText(PhoneVerification.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                //verifyVerificationCode("123456");
             }
 
             @Override
             public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                 super.onCodeSent(s, forceResendingToken);
+
+                verifycode.setInputType(TYPE_CLASS_NUMBER);
+
+
                 Verificationid=s;
                 resendingToken=forceResendingToken;
                 sendingcode.setText("Code Sent ");
@@ -158,7 +206,7 @@ public class PhoneVerification extends AppCompatActivity {
                             Toast.makeText(PhoneVerification.this,"Success",Toast.LENGTH_SHORT).show();
                             FirebaseUser user = task.getResult().getUser();
                             progressBar.setVisibility(View.GONE);
-                            autodetecting.setText("Verification Successfull");
+                            autodetecting.setText("Verification Successful");
                             autodetecting.setTextSize(25);
 
                             YoYo.with(Techniques.FlipOutX)
@@ -177,17 +225,14 @@ public class PhoneVerification extends AppCompatActivity {
                                 public void run() {
 
 
-
-
-
                                     proceed.setVisibility(View.VISIBLE);
 
-                                    YoYo.with(Techniques.FlipInY)
+                                    YoYo.with(Techniques.SlideInRight)
                                             .playOn(proceed);
 
 
                                 }
-                            },2000);
+                            },1500);
 
                             // ...
                         } else {

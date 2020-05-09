@@ -1,6 +1,7 @@
 package com.example.pahwa.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pahwa.CategoryItems;
 import com.example.pahwa.R;
 import com.example.pahwa.SliderItem;
 import com.example.pahwa.categorydetails;
@@ -116,11 +118,21 @@ public class Items extends Fragment {
 
         firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<categorydetails, CategoriesViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull CategoriesViewHolder holder, int position, @NonNull categorydetails model) {
+            protected void onBindViewHolder(@NonNull CategoriesViewHolder holder, final int position, @NonNull categorydetails model) {
 
                 holder.name.setText(model.getName());
 
                 Picasso.get().load(model.getImage()).resize(250,250).into(holder.img);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(), CategoryItems.class);
+
+                        intent.putExtra("ref",firebaseRecyclerAdapter.getRef(position).toString());
+                        startActivity(intent);
+                    }
+                });
             }
 
             @NonNull

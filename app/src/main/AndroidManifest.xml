@@ -10,7 +10,8 @@
         android:roundIcon="@drawable/ico"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CategoryItems"></activity>
+        <activity android:name=".CategoryItems"
+            android:theme="@style/BarTheme"></activity>
         <activity
             android:name=".SplashScreen"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
